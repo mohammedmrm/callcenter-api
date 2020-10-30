@@ -14,7 +14,7 @@ $city = trim($_REQUEST['city']);
 $store = trim($_REQUEST['store']);
 $limit = trim($_REQUEST['limit']);
 $page = trim($_REQUEST['page']);
-$status = $_REQUEST['status'];///-posponded , recived , returned , instorage , onway
+$status = $_REQUEST['status'];
 $orders = 0;
 $msg="";
 if(empty($limit)){
@@ -45,40 +45,7 @@ try{
             left join branches on  branches.id = orders.to_branch
             left join order_status on  order_status.id = orders.order_status_id
             ";
-  $where = "where";
-  if($status == "onway"){
-  $filter = "orders.driver_id ='".$userid."'  and (orders.confirm=1 or orders.confirm=4) and orders.driver_invoice_id = 0 and (
-            order_status_id = 1 or
-            order_status_id = 2 or
-            order_status_id = 3 or
-            order_status_id = 8 or
-            order_status_id = 13
-            )";
-  }
-  else if ($status == "returned"){
-   $filter = "orders.driver_invoice_id= 0 and orders.driver_id =".$userid." and (orders.order_status_id=9 or orders.order_status_id=6 or orders.order_status_id=5)  and (orders.confirm=1 or orders.confirm=4) and orders.storage_id <> 1 and orders.storage_id <> -1";
-  }
-  else if ($status == "recived"){
-   $filter = "orders.driver_invoice_id = 0 and orders.driver_id =".$userid." and (order_status_id=4)  and (orders.confirm=1 or orders.confirm=4)";
-  }
-  else if ($status == "instorage"){
-   $filter = "orders.driver_id =".$userid." and orders.confirm=1 and orders.storage_id = 1 and driver_invoice_id=0
-              and (orders.order_status_id=9 or orders.order_status_id=6 or orders.order_status_id=5)
-             ";
-  }
-  else if ($status == "posponded"){
-   $filter = "orders.driver_id =".$userid." and order_status_id=7  and (orders.confirm=1)";
- }
-  else{
-  $filter = "orders.driver_id ='".$userid."'  and (orders.confirm=1 or orders.confirm=4) and (
-            order_status_id = 1 or
-            order_status_id = 2 or
-            order_status_id = 3 or
-            order_status_id = 8 or
-            order_status_id = 13
-            )
-            and orders.driver_invoice_id = 0";
-  }
+  $where = "where orders.to_city in (SELECT city_id from callcenter_cities where callcenter_id=".$userid.")";
   if(!empty($search)){
    $filter .= " and (order_no like '%".$search."%'
                     or customer_name like '%".$search."%'
