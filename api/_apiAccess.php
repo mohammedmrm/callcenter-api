@@ -11,7 +11,7 @@ $password = $_REQUEST['password'];
 $token = $_REQUEST['token'];
 require_once("../php/dbconnection.php");
 if(!empty($token)){
-  $sql = 'select * from staff where api_token=?  and role_id=4';
+  $sql = 'select * from staff where api_token=?  and role_id=9';
   $loginres  = getData($con,$sql,[$token]);
   if(count($loginres) == 1){
      $msg = 1;
@@ -23,7 +23,7 @@ if(!empty($token)){
      $code = 300;
   }
  }else if(!empty($password) && !empty($username)){
-  $sql = 'select * from staff where phone=? and role_id=4';
+  $sql = 'select * from staff where phone=? and role_id=9';
   $loginres  = getData($con,$sql,[$username]);
   if(count($loginres) == 1 && password_verify($password,$loginres[0]['password'])){
      $msg = 1;
